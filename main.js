@@ -1,6 +1,4 @@
 let countdown;
-let timeLeft;
-let totalTime;
 let isRunning = false;
 let alarmTimer;
 let audioCtx;
@@ -14,14 +12,44 @@ const presetBtns = document.querySelectorAll('.preset-btn');
 const timerContainer = document.querySelector('.container');
 const soundTypeSelect = document.getElementById('sound-type');
 
+// タイマーの状態を一括管理
+let state = {
+    totalTime: 180,
+    timeLeft: 180,
+    isRunning: false,
+    targetEndTime: 0
+};
+
+// localStorage から状態を読み込む
+function loadState() {
+    const savedState = localStorage.getItem('noodleTimerState');
+    if (savedState) {
+        state = JSON.parse(savedState);
+        // 実行中の場合は、現在の時刻から残り時間を再計算
+        if (state.isRunning) {
+            const now = Date.now();
+            if (now < state.targetEndTime) {
+                state.timeLeft = Math.ceil((state.targetEndTime - now) / 1000);
+            } else {
+                state.timeLeft = 0;
+            }
+        }
+    }
+}
+
+// localStorage に状態を保存
+function saveState() {
+    localStorage.setItem('noodleTimerState', JSON.stringify(state));
+}
+
 function updateDisplay(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     minutesDisplay.textContent = mins.toString().padStart(2, '0');
     secondsDisplay.textContent = secs.toString().padStart(2, '0');
 
-    if (totalTime) {
-        const progress = (totalTime - seconds) / totalTime;
+    if (state.totalTime) {
+        const progress = (state.totalTime - seconds) / state.totalTime;
         const blueLayer = document.getElementById('bg-blue');
         const yellowLayer = document.getElementById('bg-yellow');
         const redLayer = document.getElementById('bg-red');
@@ -38,51 +66,87 @@ function updateDisplay(seconds) {
     }
 }
 
-function startTimer() {
-    if (isRunning || alarmTimer) {
-        stopAlarm();
-        if (isRunning) {
+function syncUI() {
+    updateDisplay(state.timeLeft);
+    startStopBtn.textContent = state.isRunning ? 'STOP' : 'START';
+
+    // プリセットボタンのアクティブ状態を更新
+    presetBtns.forEach(btn => {
+        if (parseInt(btn.dataset.time) === state.totalTime) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    if (state.isRunning) {
+        if (!countdown) {
+            startInterval();
+        }
+    } else {
+        if (countdown) {
             clearInterval(countdown);
-            startStopBtn.textContent = 'START';
-            isRunning = false;
+            countdown = null;
+        }
+        if (state.timeLeft === 0 && !alarmTimer) {
+            // 終了状態で停止している場合（アラームは別途管理）
+            timerContainer.classList.add('timer-finished');
+        } else if (state.timeLeft > 0) {
+            timerContainer.classList.remove('timer-finished');
+        }
+    }
+}
+
+function startInterval() {
+    if (countdown) clearInterval(countdown);
+    countdown = setInterval(() => {
+        const now = Date.now();
+        if (state.isRunning) {
+            const remaining = Math.ceil((state.targetEndTime - now) / 1000);
+            if (remaining <= 0) {
+                state.timeLeft = 0;
+                state.isRunning = false;
+                saveState();
+                syncUI();
+                playFinishSound();
+            } else {
+                state.timeLeft = remaining;
+                updateDisplay(state.timeLeft);
+            }
+        }
+    }, 100); // 頻繁にチェックして同期を保つ
+}
+
+function startTimer() {
+    loadState(); // 最新の状態をロード
+    if (state.isRunning || alarmTimer) {
+        stopAlarm();
+        if (state.isRunning) {
+            state.isRunning = false;
+            // 停止時の残り時刻を確定させる
+            state.timeLeft = Math.max(0, Math.ceil((state.targetEndTime - Date.now()) / 1000));
+            saveState();
+            syncUI();
             return;
         }
     }
 
-    if (!timeLeft) return;
+    if (state.timeLeft <= 0) return;
 
-    isRunning = true;
-    startStopBtn.textContent = 'STOP';
-
-    countdown = setInterval(() => {
-        timeLeft--;
-        updateDisplay(timeLeft);
-
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            isRunning = false;
-            startStopBtn.textContent = 'START';
-            timeLeft = 0;
-            timerContainer.classList.add('timer-finished');
-            playFinishSound();
-        }
-    }, 1000);
+    state.isRunning = true;
+    state.targetEndTime = Date.now() + (state.timeLeft * 1000);
+    saveState();
+    syncUI();
 }
 
 function resetTimer() {
     stopAlarm();
-    clearInterval(countdown);
-    isRunning = false;
-    startStopBtn.textContent = 'START';
-    timerContainer.classList.remove('timer-finished');
-    if (totalTime) {
-        timeLeft = totalTime;
-        updateDisplay(timeLeft);
-    } else {
-        timeLeft = 180;
-        totalTime = 180;
-        updateDisplay(timeLeft);
-    }
+    state.isRunning = false;
+    state.timeLeft = state.totalTime || 180;
+    state.totalTime = state.timeLeft;
+    saveState();
+    syncUI();
+
     document.getElementById('bg-blue').style.opacity = 1;
     document.getElementById('bg-yellow').style.opacity = 0;
     document.getElementById('bg-red').style.opacity = 0;
@@ -90,74 +154,29 @@ function resetTimer() {
 
 function setPreset(seconds) {
     stopAlarm();
-    clearInterval(countdown);
-    isRunning = false;
-    startStopBtn.textContent = 'START';
-    timerContainer.classList.remove('timer-finished');
+    state.isRunning = false;
+    state.totalTime = seconds;
+    state.timeLeft = seconds;
+    saveState();
+    syncUI();
 
-    totalTime = seconds;
-    timeLeft = seconds;
-    updateDisplay(timeLeft);
     document.getElementById('bg-blue').style.opacity = 1;
     document.getElementById('bg-yellow').style.opacity = 0;
     document.getElementById('bg-red').style.opacity = 0;
-
-    presetBtns.forEach(btn => {
-        if (parseInt(btn.dataset.time) === seconds) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-}
-
-function speakMessage(text) {
-    const synth = window.speechSynthesis;
-    if (!synth) return;
-
-    // 現在の読み上げをキャンセル
-    synth.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ja-JP';
-    utterance.rate = 1.2;
-    utterance.pitch = 1.0;
-
-    const voices = synth.getVoices();
-    const jaVoice = voices.find(v => v.lang === 'ja-JP' || v.lang === 'ja_JP');
-    if (jaVoice) utterance.voice = jaVoice;
-
-    synth.speak(utterance);
-}
-
-function playBeep(ctx, time, frequency, duration, volume = 0.5, type = 'sine') {
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, time);
-    gainNode.gain.setValueAtTime(0, time);
-    gainNode.gain.linearRampToValueAtTime(volume, time + 0.01);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, time + duration);
-    oscillator.start(time);
-    oscillator.stop(time + duration);
 }
 
 function playFinishSound() {
     if (alarmTimer) return;
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const soundType = soundTypeSelect.value;
+    timerContainer.classList.add('timer-finished');
 
     const runAlarm = () => {
-        const now = audioCtx.currentTime;
-
         if (soundType === 'silent') {
-            // 無音の場合は何もしない（バイブレーションのみ）
+            // 無音
         } else if (soundType.startsWith('custom')) {
             if (!customAudio) {
                 const baseName = `alarm${soundType.replace('custom', '')}`;
-                // まず mp3 を試して、ダメなら wav を試す
                 customAudio = new Audio();
                 const sources = [`sounds/${baseName}.mp3`, `sounds/${baseName}.wav`];
                 let sourceIndex = 0;
@@ -167,11 +186,8 @@ function playFinishSound() {
                         customAudio.src = sources[sourceIndex];
                         sourceIndex++;
                         customAudio.play().catch(e => {
-                            console.log(`Failed to play ${sources[sourceIndex - 1]}, trying next...`);
                             tryNextSource();
                         });
-                    } else {
-                        console.error("No valid audio file found for", baseName);
                     }
                 };
 
@@ -185,7 +201,7 @@ function playFinishSound() {
     };
 
     runAlarm();
-    alarmTimer = setInterval(runAlarm, 1000); // 2秒から1秒に変更して、よりアラームらしく
+    alarmTimer = setInterval(runAlarm, 1000);
 }
 
 function stopAlarm() {
@@ -216,30 +232,24 @@ startStopBtn.addEventListener('click', startTimer);
 resetBtn.addEventListener('click', resetTimer);
 
 soundTypeSelect.addEventListener('change', () => {
-    // すでに動いているアラームやプレビューを止める
     stopAlarm();
-
     const soundType = soundTypeSelect.value;
     if (soundType === 'silent') return;
 
     if (soundType.startsWith('custom')) {
         const baseName = `alarm${soundType.replace('custom', '')}`;
-        customAudio = new Audio();
+        const previewAudio = new Audio();
         const sources = [`sounds/${baseName}.mp3`, `sounds/${baseName}.wav`];
         let sourceIndex = 0;
 
         const tryNextSource = () => {
             if (sourceIndex < sources.length) {
-                customAudio.src = sources[sourceIndex];
+                previewAudio.src = sources[sourceIndex];
                 sourceIndex++;
-                customAudio.play().then(() => {
-                    // プレビューなので3秒後に止める
+                previewAudio.play().then(() => {
                     setTimeout(() => {
-                        if (customAudio && !alarmTimer) {
-                            customAudio.pause();
-                            customAudio.currentTime = 0;
-                            customAudio = null;
-                        }
+                        previewAudio.pause();
+                        previewAudio.currentTime = 0;
                     }, 3000);
                 }).catch(e => {
                     tryNextSource();
@@ -250,7 +260,19 @@ soundTypeSelect.addEventListener('change', () => {
     }
 });
 
-setPreset(180);
+// ストレージイベントの監視で他タブと同期
+window.addEventListener('storage', (e) => {
+    if (e.key === 'noodleTimerState') {
+        loadState();
+        syncUI();
+    }
+});
 
-// 音声リストを初期化するためのダミー呼び出し（ブラウザによっては必要）
-window.speechSynthesis.getVoices();
+// 初期化
+loadState();
+syncUI();
+
+// 音声リストを初期化するためのダミー呼び出し
+if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+}

@@ -89,6 +89,18 @@ header p {
     margin: 1rem 0 2rem;
     font-variant-numeric: tabular-nums;
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.2rem;
+    line-height: 1;
+}
+
+.timer-display span {
+    display: inline-block;
+    min-width: 1.25em;
+    /* 数字2桁分の幅を確保 */
+    text-align: center;
 }
 
 .controls {
