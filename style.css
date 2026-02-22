@@ -276,3 +276,185 @@ header p {
         transform: translate(2px, -3px) rotate(-2deg);
     }
 }
+
+/* フッターのスタイル */
+footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+}
+
+.copyright {
+    font-size: 0.7rem;
+    opacity: 0.4;
+}
+
+/* 法的ドキュメントページのための調整 */
+body:has(.doc-container) {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+}
+
+/* ヒーロー画像のスタイル */
+.hero-image-container {
+    margin: 2rem 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+}
+
+/* プラン選択ボタンのスタイル */
+.plan-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 常に3列 */
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.plan-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    text-decoration: none;
+    color: white;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.plan-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent);
+    transition: 0.5s;
+}
+
+.plan-btn:hover::before {
+    left: 100%;
+}
+
+.plan-btn:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.plan-btn .plan-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.plan-btn .plan-price {
+    display: none;
+    /* 説明文は非表示（もし残っていても） */
+}
+
+.plan-btn.premium {
+    border-color: var(--accent-color);
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.plan-btn.premium .plan-name {
+    color: var(--accent-color);
+}
+
+/* 操作方法セクションのスタイル */
+.usage-instructions {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+}
+
+.usage-instructions h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--accent-color);
+    padding-left: 10px;
+    text-align: left;
+}
+
+.usage-instructions ul {
+    list-style: none;
+    padding: 0;
+}
+
+.usage-instructions li {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+}
+
+.usage-instructions li strong {
+    color: var(--accent-color);
+    margin-right: 5px;
+}
+
+@media (max-width: 600px) {
+    .plan-buttons {
+        gap: 0.5rem;
+        /* スマホでは間隔を詰める */
+    }
+
+    .plan-btn {
+        padding: 0.8rem 0.2rem;
+    }
+
+    .plan-btn .plan-name {
+        font-size: 0.75rem;
+        /* スマホでは文字を小さく */
+        text-align: center;
+        white-space: nowrap;
+    }
+}

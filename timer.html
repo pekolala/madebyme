@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プレミアム ヌードルタイマー</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="bg-blue" class="bg-layer"></div>
+    <div id="bg-yellow" class="bg-layer"></div>
+    <div id="bg-red" class="bg-layer"></div>
+    <div class="container">
+        <header>
+            <h1>Noodle Timer</h1>
+            <p>最高の一杯のために</p>
+        </header>
+
+        <main>
+            <div class="timer-display">
+                <span id="minutes">03</span>:<span id="seconds">00</span>
+            </div>
+
+            <div class="controls">
+                <div class="presets">
+                    <button class="preset-btn" data-time="60">1<span>min</span></button>
+                    <button class="preset-btn" data-time="180">3<span>min</span></button>
+                    <button class="preset-btn" data-time="240">4<span>min</span></button>
+                    <button class="preset-btn" data-time="300">5<span>min</span></button>
+                </div>
+
+                <div class="actions">
+                    <button id="start-stop-btn" class="main-btn">START</button>
+                    <button id="reset-btn" class="secondary-btn">RESET</button>
+                </div>
+
+                <div class="sound-selector">
+                    <label for="sound-type">SOUND:</label>
+                    <select id="sound-type">
+                        <option value="silent">無音</option>
+                        <option value="custom1">できたよ！！ (alarm1)</option>
+                        <option value="custom2">へい!!!お待ちどうさま (alarm2)</option>
+                        <option value="custom3">Perfect Timing! (alarm3)</option>
+                        <option value="custom4">チャルメラ音 (alarm4)</option>
+                        <option value="custom5">セクシー音声 (alarm5)</option>
+                    </select>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-links">
+                <a href="index.html">利用規約</a>
+                <a href="privacy.html">プライバシーポリシー</a>
+                <a href="sctl.html">特定商取引法</a>
+                <a href="credits.html">クレジット</a>
+            </div>
+            <p class="copyright">&copy; 2026 Noodle Timer</p>
+        </footer>
+    </div>
+    <script src="main.js"></script>
+</body>
+
+</html>
