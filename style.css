@@ -24,13 +24,18 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    /* 上端から配置 */
+    align-items: center;
+    /* デフォルト（タイマー）は中央 */
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
     background-color: #000;
-    padding: 1rem 0;
+}
+
+body.doc-container-parent {
+    align-items: flex-start;
+    /* ランディングページは上端から */
+    padding: 2rem 1rem;
 }
 
 .bg-layer {
@@ -64,13 +69,13 @@ body {
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
     border-radius: 30px;
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 2rem;
     width: 95%;
-    max-width: 500px;
-    /* 少し広げる */
+    max-width: 450px;
     text-align: center;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    margin: 1rem auto;
+    margin: auto;
+    /* 中央寄せ */
     position: relative;
     z-index: 10;
 }
@@ -315,13 +320,84 @@ footer {
     opacity: 0.4;
 }
 
-/* 法的ドキュメントページのための調整 */
+/* ドキュメントコンテナ（利用規約、クレジット等） */
+.doc-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2rem;
+    color: #fff;
+    text-align: left;
+    position: relative;
+    z-index: 10;
+}
+
+.doc-container h1 {
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 2.5rem;
+}
+
+.doc-container h2 {
+    margin: 1.5rem 0 1rem;
+    border-left: 4px solid var(--accent-color);
+    padding-left: 10px;
+}
+
+.doc-container p,
+.doc-container li {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.doc-container ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.doc-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.doc-container th,
+.doc-container td {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.95rem;
+}
+
+.doc-container th {
+    width: 30%;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.back-link {
+    display: block;
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* 法的ドキュメントページのためのベース設定 */
 .doc-container-parent {
     height: auto;
     min-height: 100vh;
     overflow-y: auto;
-    display: flex;
-    align-items: flex-start;
 }
 
 /* ヒーロー画像のスタイル */
@@ -438,6 +514,13 @@ footer {
     line-height: 1.6;
     margin-bottom: 1rem;
     opacity: 0.9;
+}
+
+.credit-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
 }
 
 .plan-btn.premium {

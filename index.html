@@ -5,121 +5,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noodle Timer - 最高の一杯のために</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="doc-container-parent">
     <div id="bg-blue" class="bg-layer"></div>
     <div id="bg-yellow" class="bg-layer"></div>
     <div id="bg-red" class="bg-layer"></div>
+    <div class="doc-container">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center;">Noodle Timer</h1>
+        <p style="text-align: center; opacity: 0.7; margin-bottom: 2rem;">最高の一杯のために</p>
 
-    <div class="container main-layout">
-        <header>
-            <h1>Noodle Timer</h1>
-            <p>最高の一杯のために</p>
-        </header>
+        <div class="plan-buttons">
+            <a href="timer.html" class="plan-btn">
+                <span class="plan-name">無料版へ</span>
+            </a>
+            <a href="timer.html" class="plan-btn premium">
+                <span class="plan-name">買い切り版へ</span>
+            </a>
+            <a href="timer.html" class="plan-btn premium">
+                <span class="plan-name">サブスク版へ</span>
+            </a>
+        </div>
 
-        <main>
-            <div class="timer-display">
-                <span id="minutes">03</span>:<span id="seconds">00</span>
-            </div>
+        <div class="hero-image-container">
+            <img src="timer_hero.png" alt="Noodle Timer App Screenshot" class="hero-image">
+        </div>
 
-            <div class="controls">
-                <div class="presets">
-                    <button class="preset-btn" data-time="60">1<span>min</span></button>
-                    <button class="preset-btn" data-time="180">3<span>min</span></button>
-                    <button class="preset-btn" data-time="240">4<span>min</span></button>
-                    <button class="preset-btn" data-time="300">5<span>min</span></button>
-                </div>
-
-                <div class="actions">
-                    <button id="start-stop-btn" class="main-btn">START</button>
-                    <button id="reset-btn" class="secondary-btn">RESET</button>
-                </div>
-
-                <div class="sound-selector">
-                    <label for="sound-type">SOUND:</label>
-                    <select id="sound-type">
-                        <option value="silent">無音</option>
-                        <option value="custom1">できたよ！！ (alarm1)</option>
-                        <option value="custom2">へい!!!お待ちどうさま (alarm2)</option>
-                        <option value="custom3">Perfect Timing! (alarm3)</option>
-                        <option value="custom4">チャルメラ音 (alarm4)</option>
-                        <option value="custom5">セクシー音声 (alarm5)</option>
-                    </select>
-                </div>
-            </div>
-        </main>
-
-        <section class="info-section">
-            <div class="plan-buttons">
-                <a href="#" class="plan-btn">
-                    <span class="plan-name">無料版へ</span>
-                </a>
-                <a href="#" class="plan-btn premium">
-                    <span class="plan-name">買い切り版へ</span>
-                </a>
-                <a href="#" class="plan-btn premium">
-                    <span class="plan-name">サブスク版へ</span>
-                </a>
-            </div>
-
-            <div class="hero-image-container">
-                <img src="timer_hero.png" alt="Noodle Timer App Screenshot" class="hero-image">
-            </div>
-
-            <div class="usage-instructions">
-                <h2>操作方法</h2>
-                <ul>
-                    <li><strong>時間の選択:</strong> 1分、3分、4分、5分のボタンから選んでタップします。</li>
-                    <li><strong>サウンド選択:</strong> ドロップダウンからお好みの通知音を選べます。</li>
-                    <li><strong>スタート/停止:</strong> 「START」で開始、「STOP」で一時停止します。</li>
-                    <li><strong>リセット:</strong> 「RESET」でタイマーを初期状態に戻します。</li>
-                </ul>
-            </div>
-
-            <div class="terms-container">
-                <h2>利用規約</h2>
-                <h3>第1条（適用）</h3>
-                <p>本規約は、本アプリ（以下「本サービス」）の提供条件および利用に関する運営者（個人）とユーザーとの権利義務を定めます。</p>
-                <h3>第2条（サービス内容）</h3>
-                <p>提供プラン：<br>
-                    ・無料版：0円 / 買い切り版：500円 / サブスク版：月額300円</p>
-                <h3>第3条（知的財産権）</h3>
-                <p>音声提供：MMVC（ずんだもん、四国めたん、九州そら、東北きりたん）各権利者に帰属します。</p>
-                <h3>第4条（禁止事項）</h3>
-                <p>解析、音声データの無断転載・販売等を禁止します。</p>
-                <h3>第5条（免責）</h3>
-                <p>本サービス利用による損害について運営者は責任を負いません。</p>
-            </div>
-
-            <div class="plan-buttons">
-                <a href="#" class="plan-btn">
-                    <span class="plan-name">無料版へ</span>
-                </a>
-                <a href="#" class="plan-btn premium">
-                    <span class="plan-name">買い切り版へ</span>
-                </a>
-                <a href="#" class="plan-btn premium">
-                    <span class="plan-name">サブスク版へ</span>
-                </a>
-            </div>
+        <section class="usage-instructions">
+            <h2>操作方法</h2>
+            <ul>
+                <li><strong>時間の選択:</strong> 1分、3分、4分、5分のボタンから選んでタップします。</li>
+                <li><strong>サウンド選択:</strong> ドロップダウンからお好みの通知音を選べます。</li>
+                <li><strong>スタート/停止:</strong> 「START」で開始、「STOP」で一時停止します。</li>
+                <li><strong>リセット:</strong> 「RESET」でタイマーを初期状態に戻します。</li>
+            </ul>
         </section>
 
+        <div class="terms-container">
+            <h2>利用規約</h2>
+            <h3>第1条（適用）</h3>
+            <p>本規約は、本アプリ（以下「本サービス」）の提供条件および利用に関する運営者（個人）とユーザーとの権利義務を定めます。利用により同意したものとみなします。</p>
+
+            <h3>第2条（サービス内容）</h3>
+            <p>本サービスは音声再生機能を含むWebアプリです。<br>
+                内容は予告なく変更・停止・終了することがあります。</p>
+            <p>提供プラン・料金：<br>
+                ・無料版（広告あり）：0円<br>
+                ・買い切り版（広告なし）：500円<br>
+                ・サブスク版（広告なし・サウンド定期入れ替え・ご要望受付）：月額 300円</p>
+
+            <h3>第3条（知的財産権）</h3>
+            <p>音声提供：<br>
+                MMVC:ずんだもん、四国めたん、九州そら、東北きりたん<br>
+                各音源は利用規約および共通規約に基づき使用しています。</p>
+
+            <h3>第4条（禁止事項）</h3>
+            <p>法令違反、不正アクセス・解析、音声データの無断転載・販売等を禁止します。</p>
+
+            <h3>第5条（免責）</h3>
+            <p>本サービス利用により生じた損害について、運営者は一切責任を負いません。</p>
+        </div>
+
+        <div class="plan-buttons">
+            <a href="timer.html" class="plan-btn">
+                <span class="plan-name">無料版へ</span>
+            </a>
+            <a href="timer.html" class="plan-btn premium">
+                <span class="plan-name">買い切り版へ</span>
+            </a>
+            <a href="timer.html" class="plan-btn premium">
+                <span class="plan-name">サブスク版へ</span>
+            </a>
+        </div>
+
         <footer>
-            <div class="footer-links">
+            <div class="footer-links" style="margin-top: 3rem;">
                 <a href="privacy.html">プライバシーポリシー</a>
                 <a href="sctl.html">特定商取引法</a>
                 <a href="credits.html">クレジット</a>
             </div>
             <p class="copyright">&copy; 2026 Noodle Timer</p>
-            <div class="version-info">Ver 2026-02-23 00:30 (Build-Unified)</div>
         </footer>
     </div>
-    <script src="main.js"></script>
 </body>
 
 </html>
