@@ -1,9 +1,4 @@
-let countdown;
-let isRunning = false;
-let alarmTimer;
-let audioCtx;
-let customAudio;
-
+// タイマー表示・操作要素の取得（存在チェック用）
 const minutesDisplay = document.getElementById('minutes');
 const secondsDisplay = document.getElementById('seconds');
 const startStopBtn = document.getElementById('start-stop-btn');
@@ -43,17 +38,19 @@ function saveState() {
 }
 
 function updateDisplay(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    minutesDisplay.textContent = mins.toString().padStart(2, '0');
-    secondsDisplay.textContent = secs.toString().padStart(2, '0');
+    if (minutesDisplay && secondsDisplay) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        minutesDisplay.textContent = mins.toString().padStart(2, '0');
+        secondsDisplay.textContent = secs.toString().padStart(2, '0');
+    }
 
-    if (state.totalTime) {
+    const blueLayer = document.getElementById('bg-blue');
+    const yellowLayer = document.getElementById('bg-yellow');
+    const redLayer = document.getElementById('bg-red');
+
+    if (blueLayer && yellowLayer && redLayer && state.totalTime) {
         const progress = (state.totalTime - seconds) / state.totalTime;
-        const blueLayer = document.getElementById('bg-blue');
-        const yellowLayer = document.getElementById('bg-yellow');
-        const redLayer = document.getElementById('bg-red');
-
         if (progress < 0.5) {
             blueLayer.style.opacity = 1 - (progress * 2);
             yellowLayer.style.opacity = progress * 2;
@@ -68,16 +65,20 @@ function updateDisplay(seconds) {
 
 function syncUI() {
     updateDisplay(state.timeLeft);
-    startStopBtn.textContent = state.isRunning ? 'STOP' : 'START';
+    if (startStopBtn) {
+        startStopBtn.textContent = state.isRunning ? 'STOP' : 'START';
+    }
 
     // プリセットボタンのアクティブ状態を更新
-    presetBtns.forEach(btn => {
-        if (parseInt(btn.dataset.time) === state.totalTime) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
+    if (presetBtns) {
+        presetBtns.forEach(btn => {
+            if (parseInt(btn.dataset.time) === state.totalTime) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
 
     if (state.isRunning) {
         if (!countdown) {
@@ -88,11 +89,12 @@ function syncUI() {
             clearInterval(countdown);
             countdown = null;
         }
-        if (state.timeLeft === 0 && !alarmTimer) {
-            // 終了状態で停止している場合（アラームは別途管理）
-            timerContainer.classList.add('timer-finished');
-        } else if (state.timeLeft > 0) {
-            timerContainer.classList.remove('timer-finished');
+        if (timerContainer) {
+            if (state.timeLeft === 0 && !alarmTimer) {
+                timerContainer.classList.add('timer-finished');
+            } else if (state.timeLeft > 0) {
+                timerContainer.classList.remove('timer-finished');
+            }
         }
     }
 }
@@ -114,16 +116,15 @@ function startInterval() {
                 updateDisplay(state.timeLeft);
             }
         }
-    }, 100); // 頻繁にチェックして同期を保つ
+    }, 100);
 }
 
 function startTimer() {
-    loadState(); // 最新の状態をロード
+    loadState();
     if (state.isRunning || alarmTimer) {
         stopAlarm();
         if (state.isRunning) {
             state.isRunning = false;
-            // 停止時の残り時刻を確定させる
             state.timeLeft = Math.max(0, Math.ceil((state.targetEndTime - Date.now()) / 1000));
             saveState();
             syncUI();
@@ -146,10 +147,6 @@ function resetTimer() {
     state.totalTime = state.timeLeft;
     saveState();
     syncUI();
-
-    document.getElementById('bg-blue').style.opacity = 1;
-    document.getElementById('bg-yellow').style.opacity = 0;
-    document.getElementById('bg-red').style.opacity = 0;
 }
 
 function setPreset(seconds) {
@@ -159,21 +156,16 @@ function setPreset(seconds) {
     state.timeLeft = seconds;
     saveState();
     syncUI();
-
-    document.getElementById('bg-blue').style.opacity = 1;
-    document.getElementById('bg-yellow').style.opacity = 0;
-    document.getElementById('bg-red').style.opacity = 0;
 }
 
 function playFinishSound() {
-    if (alarmTimer) return;
+    if (alarmTimer || !soundTypeSelect) return;
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const soundType = soundTypeSelect.value;
-    timerContainer.classList.add('timer-finished');
+    if (timerContainer) timerContainer.classList.add('timer-finished');
 
     const runAlarm = () => {
         if (soundType === 'silent') {
-            // 無音
         } else if (soundType.startsWith('custom')) {
             if (!customAudio) {
                 const baseName = `alarm${soundType.replace('custom', '')}`;
@@ -185,12 +177,9 @@ function playFinishSound() {
                     if (sourceIndex < sources.length) {
                         customAudio.src = sources[sourceIndex];
                         sourceIndex++;
-                        customAudio.play().catch(e => {
-                            tryNextSource();
-                        });
+                        customAudio.play().catch(() => tryNextSource());
                     }
                 };
-
                 customAudio.loop = true;
                 tryNextSource();
             }
@@ -221,46 +210,47 @@ function stopAlarm() {
     if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
     }
-    timerContainer.classList.remove('timer-finished');
+    if (timerContainer) timerContainer.classList.remove('timer-finished');
 }
 
-presetBtns.forEach(btn => {
-    btn.addEventListener('click', () => setPreset(parseInt(btn.dataset.time)));
-});
+if (presetBtns) {
+    presetBtns.forEach(btn => {
+        btn.addEventListener('click', () => setPreset(parseInt(btn.dataset.time)));
+    });
+}
 
-startStopBtn.addEventListener('click', startTimer);
-resetBtn.addEventListener('click', resetTimer);
+if (startStopBtn) startStopBtn.addEventListener('click', startTimer);
+if (resetBtn) resetBtn.addEventListener('click', resetTimer);
 
-soundTypeSelect.addEventListener('change', () => {
-    stopAlarm();
-    const soundType = soundTypeSelect.value;
-    if (soundType === 'silent') return;
+if (soundTypeSelect) {
+    soundTypeSelect.addEventListener('change', () => {
+        stopAlarm();
+        const soundType = soundTypeSelect.value;
+        if (soundType === 'silent') return;
 
-    if (soundType.startsWith('custom')) {
-        const baseName = `alarm${soundType.replace('custom', '')}`;
-        const previewAudio = new Audio();
-        const sources = [`sounds/${baseName}.mp3`, `sounds/${baseName}.wav`];
-        let sourceIndex = 0;
+        if (soundType.startsWith('custom')) {
+            const baseName = `alarm${soundType.replace('custom', '')}`;
+            const previewAudio = new Audio();
+            const sources = [`sounds/${baseName}.mp3`, `sounds/${baseName}.wav`];
+            let sourceIndex = 0;
 
-        const tryNextSource = () => {
-            if (sourceIndex < sources.length) {
-                previewAudio.src = sources[sourceIndex];
-                sourceIndex++;
-                previewAudio.play().then(() => {
-                    setTimeout(() => {
-                        previewAudio.pause();
-                        previewAudio.currentTime = 0;
-                    }, 3000);
-                }).catch(e => {
-                    tryNextSource();
-                });
-            }
-        };
-        tryNextSource();
-    }
-});
+            const tryNextSource = () => {
+                if (sourceIndex < sources.length) {
+                    previewAudio.src = sources[sourceIndex];
+                    sourceIndex++;
+                    previewAudio.play().then(() => {
+                        setTimeout(() => {
+                            previewAudio.pause();
+                            previewAudio.currentTime = 0;
+                        }, 3000);
+                    }).catch(() => tryNextSource());
+                }
+            };
+            tryNextSource();
+        }
+    });
+}
 
-// ストレージイベントの監視で他タブと同期
 window.addEventListener('storage', (e) => {
     if (e.key === 'noodleTimerState') {
         loadState();
@@ -272,7 +262,6 @@ window.addEventListener('storage', (e) => {
 loadState();
 syncUI();
 
-// 音声リストを初期化するためのダミー呼び出し
 if (window.speechSynthesis) {
     window.speechSynthesis.getVoices();
 }
