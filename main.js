@@ -1,3 +1,8 @@
+let countdown;
+let alarmTimer;
+let audioCtx;
+let customAudio;
+
 // タイマー表示・操作要素の取得（存在チェック用）
 const minutesDisplay = document.getElementById('minutes');
 const secondsDisplay = document.getElementById('seconds');
